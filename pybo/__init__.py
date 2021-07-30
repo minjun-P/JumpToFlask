@@ -25,7 +25,7 @@ migrate = Migrate()
 def create_app():
     app = Flask(__name__)
     # 설정 파일을 app에 등록하기
-    app.config.from_object(config)
+    app.config.from_envvar('APP_CONFIG_FILE')
 
     # ORM - 데이터베이스 관리
     db.init_app(app)
