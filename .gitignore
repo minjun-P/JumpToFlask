@@ -2,4 +2,4 @@
 pybo.db
 *.pyc
 __pycache__
-migration/
+migrations/
