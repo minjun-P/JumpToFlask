@@ -4,7 +4,7 @@ from werkzeug.utils import redirect
 from datetime import datetime
 
 from pybo.views.auth_views import login_required
-from pybo.models import Question
+from pybo.models import Question, Answer, User
 from pybo.forms import QuestionForm, AnswerForm
 from pybo import db
 
@@ -12,12 +12,30 @@ bp = Blueprint('question',__name__, url_prefix='/question')
 
 @bp.route('/list')
 def _list():
+    # 입력 파라미터
     page = request.args.get('page',type=int, default=1) 
-    #url에서 페이지 파라미터 가져오기
+    kw = request.args.get('kw', type=str, default='')
+
+    #url에서 페이지 파라미터 가져오기 - 조회
     question_list = Question.query.order_by(Question.create_date.desc())
+    if kw:
+        search = '%%{}%%'.format(kw)
+        sub_query = db.session.query(Answer.question_id, Answer.content, User.username) \
+            .join(User, Answer.user_id == User.id).sbuquery()
+        question_list = question_list \
+            .join(User) \
+            .outerjoin(sub_query, sub_query.c.question_id == Question.id) \
+            .filter(Question.subject.ilike(search) |
+                    Question.content.ilike(search) |
+                    User.username.ilike(search) |
+                    sub_query.c.content.ilike(search) |
+                    sub_query.c.username.ilike(search)
+                    ) \
+            .distinct()
+
     question_list = question_list.paginate(page, per_page=10)
     # pagination 객체로 만들기. 위 설정에서는 page 변수를 시작으로 10개씩 끊어줌.
-    return render_template('question/question_list.html', question_list = question_list)
+    return render_template('question/question_list.html', question_list = question_list, page=page, kw=kw)
 
 @bp.route('/detail/<int:question_id>')
 def detail(question_id):
