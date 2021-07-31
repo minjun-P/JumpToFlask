@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flaskext.markdown import Markdown
@@ -20,6 +20,12 @@ naming_convention = {
 #전역 변수로 사용해서 타 모듈에서도 실행할 수 있도록
 db = SQLAlchemy(metadata=MetaData(naming_convention=naming_convention))
 migrate = Migrate()
+
+# 오류 페이지 구성
+def page_not_found(e):
+    return render_template('404.html'), 404
+def server_error(e):
+    return render_template('500.html'), 500
 
 # 앱 팩토리 구성
 def create_app():
@@ -46,6 +52,11 @@ def create_app():
     app.register_blueprint(auth_views.bp)
     app.register_blueprint(comment_views.bp)
     app.register_blueprint(vote_views.bp)
+
+    #오류 페이지 관리
+    app.register_error_handler(404, page_not_found)
+    app.register_error_handler(500, server_error)
+
     # 필터
     from .filter import format_datetime
         #앱에 적용될 jinja 환경에 해당 함수를 필터로 추가한다.
