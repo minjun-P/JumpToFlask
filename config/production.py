@@ -18,7 +18,7 @@ dictConfig({
         'file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/myproject.log'),
+            'filename': os.path.join(BASE_DIR, 'logs/jumptoflask.log'),
             'maxBytes': 1024 * 1024 * 5,  # 5 MB
             'backupCount': 5,
             'formatter': 'default',
