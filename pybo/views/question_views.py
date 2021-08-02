@@ -15,7 +15,7 @@ def _list():
     # 입력 파라미터
     page = request.args.get('page',type=int, default=1) 
     kw = request.args.get('kw', type=str, default='')
-
+    
     #url에서 페이지 파라미터 가져오기 - 조회
     question_list = Question.query.order_by(Question.create_date.desc())
     if kw:
