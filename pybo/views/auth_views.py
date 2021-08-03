@@ -29,7 +29,7 @@ def signup():
 @bp.route('/login/', methods=('GET', 'POST'))
 def login():
     form = UserLoginForm()
-    3/0
+    
     if request.method == 'POST' and form.validate_on_submit():
         error = None
         user = User.query.filter_by(username=form.username.data).first()
